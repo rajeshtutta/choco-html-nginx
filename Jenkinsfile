@@ -2,14 +2,14 @@ pipeline {
 agent any
 
 environment {
-    DOCKER_IMAGE = "rajeshtutta123/choco"
+    DOCKER_IMAGE = "rajeshtutta123/choco-html-nginx"
 }
 
 stages {
 
     stage('Clone Repository') {
         steps {
-            git branch: 'main', url: 'https://github.com/rajeshtutta/choco.git'
+            git branch: 'main', url: 'https://github.com/rajeshtutta/choco-html-nginx.git'
         }
     }
 
@@ -24,16 +24,12 @@ stages {
             withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                 sh 'echo $PASS | docker login -u $USER --password-stdin'
                 sh 'docker push $DOCKER_IMAGE:latest'
+                sh 'docker logout'
             }
         }
     }
 
-    stage('Deploy to Kubernetes') {
-        steps {
-            sh 'kubectl apply -f k8s-deployment.yml'
-            sh 'kubectl apply -f k8s-service.yml'
-        }
-    }
 }
 
 }
+
