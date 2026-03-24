@@ -1,11 +1,14 @@
-FROM python:3.9-slim
+# Use official nginx image
+FROM nginx:alpine
 
-WORKDIR /app
+# Remove default nginx static files
+RUN rm -rf /usr/share/nginx/html/*
 
-COPY . .
+# Copy your website files to nginx html directory
+COPY . /usr/share/nginx/html
 
-RUN pip install flask gunicorn
+# Expose port 80
+EXPOSE 80
 
-EXPOSE 5000
-
-CMD ["gunicorn","--bind","0.0.0.0:5000","app:app"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
